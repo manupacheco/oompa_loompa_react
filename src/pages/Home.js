@@ -9,13 +9,11 @@ class Home extends Component {
     oompaLoompas: [],
     isLoading: true,
   }
-
-  page = 0;
+  page = 1;
 
   componentDidMount(){
-    const cookies = document.cookie.search('list');
-    const inStorage = JSON.parse(localStorage.getItem('list'));
-    this.page = 1;
+    const cookies = document.cookie.search(`list${this.page}`);
+    const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
 
     if (document.cookie.length === 0) { //clean all storage
       console.log('clear storage')
@@ -36,7 +34,6 @@ class Home extends Component {
     document.onscroll = (e) => {
       if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight-0.5) {
         if (window.location.pathname === '/') {
-        console.log('hola')
         this.scrollList()
         }
       }
@@ -44,6 +41,7 @@ class Home extends Component {
   }
 
   getOompaLoompas = (page) => {
+    console.log('llamada api')
     oompaLoompaService.getOompaLoompas(page)
       .then((data) => {
         if(this.page > 1){
@@ -51,6 +49,8 @@ class Home extends Component {
             serverOompaLoompas: this.state.serverOompaLoompas.concat(data),
             oompaLoompas: this.state.serverOompaLoompas.concat(data),
           })
+          localStorage.setItem(`list${this.page}`, JSON.stringify(data));
+          document.cookie = `list${this.page}=; max-age=86400`;
         } else {
           console.log(data)
           this.setState({
@@ -58,8 +58,8 @@ class Home extends Component {
             oompaLoompas: data,
             isLoading: false,
           })
-          localStorage.setItem('list', JSON.stringify(data));
-          document.cookie = `list=true; max-age=86400`;
+          localStorage.setItem(`list${this.page}`, JSON.stringify(data));
+          document.cookie = `list${this.page}=; max-age=86400`;
         }
       })
   }
@@ -81,7 +81,18 @@ class Home extends Component {
 
   scrollList = () => {
     this.page++;
-    this.getOompaLoompas(this.page);
+    const cookies = document.cookie.search(`list${this.page}`);
+    const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
+
+    if (cookies === -1) {
+      this.getOompaLoompas(this.page)
+    } else {
+      console.log('desde storage')
+      this.setState({
+        serverOompaLoompas: this.state.serverOompaLoompas.concat(inStorage),
+        oompaLoompas: this.state.oompaLoompas.concat(inStorage),
+      })
+    }
   }
 
   renderList = () => {
