@@ -17,6 +17,7 @@ class ListOompaLoompas extends Component {
           oompaLoompas: data,
           isLoading: false,
         })
+        // document.cookie = ''
       })
   }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import oompaLoompaService from '../services/oompaLoompaService'
+import oompaLoompaService from '../services/oompaLoompaService';
 
 class Detail extends Component {
 
@@ -10,14 +10,34 @@ class Detail extends Component {
 
   componentDidMount(){
     const {id} = this.props.match.params;
-    oompaLoompaService.getOompaLoompa(id)
-      .then(({data})=>{
-        console.log(data)
-        this.setState({
-          oompaLoompa: data,
-          isLoading: false,
-        })
+    const inStorage = JSON.parse(localStorage.getItem(id));
+    const cookies = document.cookie.search(`.${id}=`);
+    console.log(document.cookie)
+    
+    if(document.cookie.length === 0){ //clean all storage
+      console.log('clear storage')
+      localStorage.clear();
+    }
+
+    if(cookies === -1){
+      localStorage.removeItem(id)
+      console.log('elimina storage y llamada API')
+      oompaLoompaService.getOompaLoompa(id)
+        .then(({data}) => {
+            this.setState({
+              oompaLoompa: data,
+              isLoading: false,
+            })
+            localStorage.setItem(id, JSON.stringify(data));
+            document.cookie = `.${id}=; max-age=86400`;
+          })
+    } else {
+      console.log('desde storage')
+      this.setState({
+        oompaLoompa: inStorage,
+        isLoading: false,
       })
+    }
   }
 
   renderInfo = () => {
