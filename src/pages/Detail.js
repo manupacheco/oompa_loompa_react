@@ -12,8 +12,7 @@ class Detail extends Component {
     const {id} = this.props.match.params;
     const inStorage = JSON.parse(localStorage.getItem(id));
     const cookies = document.cookie.search(`.${id}=true`);
-    console.log(document.cookie)
-    
+     
     if(document.cookie.length === 0){ //clean all storage
       console.log('clear storage')
       localStorage.clear();

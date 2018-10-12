@@ -13,6 +13,11 @@ class ListOompaLoompas extends Component {
     const cookies = document.cookie.search('list');
     const inStorage = JSON.parse(localStorage.getItem('list'));
 
+    if (document.cookie.length === 0) { //clean all storage
+      console.log('clear storage')
+      localStorage.clear();
+    }
+
     if(cookies === -1){
     oompaLoompaService.getOompaLoompas()
       .then((data) => {
