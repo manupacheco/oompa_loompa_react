@@ -4,7 +4,7 @@ import ListOompaLoompas from '../components/ListOompaLoompas'
 class Home extends Component {
   render() {
     return (
-      <div>
+      <div className='container'>
         <input></input>
         <h1>Find your Oompa Loompa</h1>
         <h2>There are more than 100k</h2>

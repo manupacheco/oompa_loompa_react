@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import oompaLoompaService from '../services/oompaLoompaService'
+import { Link } from 'react-router-dom';
 
 class ListOompaLoompas extends Component {
 
@@ -21,9 +22,11 @@ class ListOompaLoompas extends Component {
 
   renderList = () => {
     return this.state.oompaLoompas.map(({ first_name, last_name, gender, image, profession, id}) =>
-    <div key={id}>
-      <img src={image} alt={last_name}/>
-      <h3>{first_name} {last_name}</h3>
+    <div className='col-md-4 col-sm-12' key={id}>
+      <Link to={`/${id}`} className='card-link'>
+        <img src={image} alt={last_name}/>
+        <h3>{first_name} {last_name}</h3>
+      </Link>
       <p>{gender==='F' ? 'Woman' : 'Men'}</p>
       <p>{profession}</p>
     </div>)
@@ -31,7 +34,7 @@ class ListOompaLoompas extends Component {
 
   render() {
     return (
-      <div>
+      <div className='row'>
           {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
       </div>
     );
