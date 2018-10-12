@@ -71,7 +71,7 @@ class ListOompaLoompas extends Component {
   render() {
     return (
       <div>
-        <input type="text" className="form-control form-control-lg" placeholder="Search" onChange={this.search}/>
+        <input type="text" className="" placeholder="Search" onChange={this.search}/>
         <div className='row'>
             {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
         </div>
