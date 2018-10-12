@@ -10,10 +10,12 @@ class Home extends Component {
     isLoading: true,
   }
 
+  page = 0;
+
   componentDidMount(){
-    window.addEventListener('scroll', this.handleScroll.bind(this));
     const cookies = document.cookie.search('list');
     const inStorage = JSON.parse(localStorage.getItem('list'));
+    this.page = 1;
 
     if (document.cookie.length === 0) { //clean all storage
       console.log('clear storage')
@@ -21,17 +23,7 @@ class Home extends Component {
     }
 
     if(cookies === -1){
-    oompaLoompaService.getOompaLoompas()
-      .then((data) => {
-        console.log(data)
-        this.setState({
-          serverOompaLoompas: data,
-          oompaLoompas: data,
-          isLoading: false,
-        })
-        localStorage.setItem('list', JSON.stringify(data));
-        document.cookie = `list=true; max-age=86400`;
-      })
+      this.getOompaLoompas(this.page)
     } else {
       console.log('desde storage')
       this.setState({
@@ -40,6 +32,36 @@ class Home extends Component {
         isLoading: false,
       })
     }
+
+    document.onscroll = (e) => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight-0.5) {
+        if (window.location.pathname === '/') {
+        console.log('hola')
+        this.scrollList()
+        }
+      }
+    }
+  }
+
+  getOompaLoompas = (page) => {
+    oompaLoompaService.getOompaLoompas(page)
+      .then((data) => {
+        if(this.page > 1){
+          this.setState({
+            serverOompaLoompas: this.state.serverOompaLoompas.concat(data),
+            oompaLoompas: this.state.serverOompaLoompas.concat(data),
+          })
+        } else {
+          console.log(data)
+          this.setState({
+            serverOompaLoompas: data,
+            oompaLoompas: data,
+            isLoading: false,
+          })
+          localStorage.setItem('list', JSON.stringify(data));
+          document.cookie = `list=true; max-age=86400`;
+        }
+      })
   }
 
   search = (e) =>{
@@ -57,6 +79,11 @@ class Home extends Component {
     })
   }
 
+  scrollList = () => {
+    this.page++;
+    this.getOompaLoompas(this.page);
+  }
+
   renderList = () => {
     return this.state.oompaLoompas.map(({ first_name, last_name, gender, image, profession, id}) =>
     <div className='col-md-4 col-sm-12' key={id}>
@@ -69,16 +96,6 @@ class Home extends Component {
     </div>)
   }
 
-  handleScroll(e) {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
-      console.log('hola')
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll.bind(this));
-  }
-
   render() {
     return (
       <div className='container'>
@@ -86,7 +103,7 @@ class Home extends Component {
         <h1>Find your Oompa Loompa</h1>
         <h2>There are more than 100k</h2>
         <div className='row'>
-            {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
+          {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
         </div>
       </div>
     );

@@ -7,8 +7,8 @@ class OompaLoompaService {
     })
   }
 
-  getOompaLoompas() {
-    return this.api.get('?page=1')
+  getOompaLoompas(page) {
+    return this.api.get(`?page=${page}`)
       .then(({data}) => data.results);
   }
 
