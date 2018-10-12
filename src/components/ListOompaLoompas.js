@@ -10,6 +10,10 @@ class ListOompaLoompas extends Component {
   }
 
   componentDidMount(){
+    const cookies = document.cookie.search('list');
+    const inStorage = JSON.parse(localStorage.getItem('list'));
+
+    if(cookies === -1){
     oompaLoompaService.getOompaLoompas()
       .then((data) => {
         console.log(data)
@@ -17,8 +21,16 @@ class ListOompaLoompas extends Component {
           oompaLoompas: data,
           isLoading: false,
         })
-        // document.cookie = ''
+        localStorage.setItem('list', JSON.stringify(data));
+        document.cookie = `list=true; max-age=86400`;
       })
+    } else {
+      console.log('desde storage')
+      this.setState({
+        oompaLoompas: inStorage,
+        isLoading: false,
+      })
+    }
   }
 
   renderList = () => {

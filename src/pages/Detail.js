@@ -11,7 +11,7 @@ class Detail extends Component {
   componentDidMount(){
     const {id} = this.props.match.params;
     const inStorage = JSON.parse(localStorage.getItem(id));
-    const cookies = document.cookie.search(`.${id}=`);
+    const cookies = document.cookie.search(`.${id}=true`);
     console.log(document.cookie)
     
     if(document.cookie.length === 0){ //clean all storage
@@ -29,7 +29,7 @@ class Detail extends Component {
               isLoading: false,
             })
             localStorage.setItem(id, JSON.stringify(data));
-            document.cookie = `.${id}=; max-age=86400`;
+            document.cookie = `.${id}=true; max-age=86400`;
           })
     } else {
       console.log('desde storage')
