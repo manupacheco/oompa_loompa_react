@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 class ListOompaLoompas extends Component {
 
   state = {
+    serverOompaLoompas: [], 
     oompaLoompas: [],
     isLoading: true,
   }
@@ -23,6 +24,7 @@ class ListOompaLoompas extends Component {
       .then((data) => {
         console.log(data)
         this.setState({
+          serverOompaLoompas: data,
           oompaLoompas: data,
           isLoading: false,
         })
@@ -32,10 +34,26 @@ class ListOompaLoompas extends Component {
     } else {
       console.log('desde storage')
       this.setState({
+        serverOompaLoompas: inStorage,
         oompaLoompas: inStorage,
         isLoading: false,
       })
     }
+  }
+
+  search = (e) =>{
+    const {serverOompaLoompas} = this.state; 
+    const updateList = serverOompaLoompas.filter((oompa)=>{
+      return oompa.first_name.toLowerCase().search(
+        e.target.value.toLowerCase()) !== -1 || 
+      oompa.last_name.toLowerCase().search(
+        e.target.value.toLowerCase()) !== -1 ||
+      oompa.profession.toLowerCase().search(
+        e.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({
+      oompaLoompas: updateList,
+    })
   }
 
   renderList = () => {
@@ -52,8 +70,11 @@ class ListOompaLoompas extends Component {
 
   render() {
     return (
-      <div className='row'>
-          {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
+      <div>
+        <input type="text" className="form-control form-control-lg" placeholder="Search" onChange={this.search}/>
+        <div className='row'>
+            {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
+        </div>
       </div>
     );
   }
