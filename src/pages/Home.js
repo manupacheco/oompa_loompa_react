@@ -11,6 +11,7 @@ class Home extends Component {
   }
 
   componentDidMount(){
+    window.addEventListener('scroll', this.handleScroll.bind(this));
     const cookies = document.cookie.search('list');
     const inStorage = JSON.parse(localStorage.getItem('list'));
 
@@ -66,6 +67,16 @@ class Home extends Component {
       <p>{gender==='F' ? 'Woman' : 'Men'}</p>
       <p>{profession}</p>
     </div>)
+  }
+
+  handleScroll(e) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
+      console.log('hola')
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll.bind(this));
   }
 
   render() {
