@@ -110,7 +110,12 @@ class Home extends Component {
   render() {
     return (
       <div className='container'>
-        <input type="text" className="" placeholder="Search" onChange={this.search}/>
+        <div className="box">
+          <div className="search">
+              <input type="search" id="search" placeholder="Search..." onChange={this.search}/>
+          </div>
+        </div>
+        <i src='https://s3.eu-central-1.amazonaws.com/napptilus/level-test/imgs/ic_search.png'></i>
         <h1>Find your Oompa Loompa</h1>
         <h2>There are more than 100k</h2>
         <div className='row'>
