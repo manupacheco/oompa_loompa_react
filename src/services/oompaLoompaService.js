@@ -9,7 +9,8 @@ class OompaLoompaService {
 
   getOompaLoompas(page) {
     return this.api.get(`?page=${page}`)
-      .then(({data}) => data.results);
+      .then(({data}) => data.results)
+      .catch((error)=> error);
   }
 
   getOompaLoompa(id) {

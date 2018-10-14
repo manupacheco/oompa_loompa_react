@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import oompaLoompaService from '../services/oompaLoompaService'
-import { Link } from 'react-router-dom';
+import oompaLoompaService from '../services/oompaLoompaService';
+import { TitleOne, TitleTwo } from '../components/Titles';
+import SearchInput from '../components/SearchInput';
+import CardList from '../components/CardList';
 
 class Home extends Component {
  
@@ -12,11 +14,10 @@ class Home extends Component {
   page = 1;
 
   componentDidMount(){
-    const cookies = document.cookie.search(`list${this.page}`);
+    const cookies = document.cookie.indexOf(`list${this.page}`);
     const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
 
     if (document.cookie.length === 0) { //clean all storage
-      console.log('clear storage')
       localStorage.clear();
     }
 
@@ -81,7 +82,7 @@ class Home extends Component {
 
   scrollList = () => {
     this.page++;
-    const cookies = document.cookie.search(`list${this.page}`);
+    const cookies = document.cookie.indexOf(`list${this.page}`);
     const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
 
     if (cookies === -1) {
@@ -96,28 +97,16 @@ class Home extends Component {
   }
 
   renderList = () => {
-    return this.state.oompaLoompas.map(({ first_name, last_name, gender, image, profession, id}) =>
-    <div className='col-md-4 col-sm-12' key={id}>
-      <Link to={`/${id}`} className='card-link'>
-        <img src={image} alt={last_name}/>
-        <h3>{first_name} {last_name}</h3>
-      </Link>
-      <p>{gender==='F' ? 'Woman' : 'Men'}</p>
-      <p>{profession}</p>
-    </div>)
+    return this.state.oompaLoompas.map((oompa) =>
+      <CardList oompa={oompa} key={oompa.id}/>)
   }
 
   render() {
     return (
       <div className='container'>
-        <div className="box">
-          <div className="search">
-              <input type="search" id="search" placeholder="Search..." onChange={this.search}/>
-          </div>
-        </div>
-        <i src='https://s3.eu-central-1.amazonaws.com/napptilus/level-test/imgs/ic_search.png'></i>
-        <h1>Find your Oompa Loompa</h1>
-        <h2>There are more than 100k</h2>
+        <SearchInput type='search' id='search' placeholder="Search" onChange={this.search}></SearchInput>
+        <TitleOne>Find your Oompa Loompa</TitleOne>
+        <TitleTwo>There are more than 100k</TitleTwo>
         <div className='row'>
           {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
         </div>

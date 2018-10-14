@@ -1,18 +1,28 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css';
+import styled from 'styled-components';
+import Logo from './Logo';
+
+const StyledNavbar = styled.div`
+  background-color: rgb(202, 202, 202);
+  >div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+`;
 
 class Navbar extends Component {
   render() {
     return (
-      <div className='Navbar'>
+      <StyledNavbar>
         <div className='container'>
           <Link to='/'>
-            <img src='https://s3.eu-central-1.amazonaws.com/napptilus/level-test/imgs/logo-umpa-loompa.png' className='logo' alt='logo'/>
+            <Logo/>
           </Link>
           <b>Oompa Loompa's Crew</b>
         </div>
-      </div>
+      </StyledNavbar>
     );
   }
 }
