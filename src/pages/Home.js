@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import oompaLoompaService from '../services/oompaLoompaService';
+import dataStore from '../helpers/dataStore';
+import Loading from '../components/Loading';
 import { TitleOne, TitleTwo } from '../components/Titles';
 import SearchInput from '../components/SearchInput';
 import CardList from '../components/CardList';
@@ -14,8 +16,8 @@ class Home extends Component {
   page = 1;
 
   componentDidMount(){
-    const cookies = document.cookie.indexOf(`list${this.page}`);
-    const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
+    const cookies = dataStore.searchCookie(`.list${this.page}`);
+    const inStorage = dataStore.searchLocalStorage(`list${this.page}`);
 
     if (document.cookie.length === 0) { //clean all storage
       localStorage.clear();
@@ -24,7 +26,6 @@ class Home extends Component {
     if(cookies === -1){
       this.getOompaLoompas(this.page)
     } else {
-      console.log('desde storage')
       this.setState({
         serverOompaLoompas: inStorage,
         oompaLoompas: inStorage,
@@ -42,7 +43,6 @@ class Home extends Component {
   }
 
   getOompaLoompas = (page) => {
-    console.log('llamada api')
     oompaLoompaService.getOompaLoompas(page)
       .then((data) => {
         if(this.page > 1){
@@ -50,17 +50,14 @@ class Home extends Component {
             serverOompaLoompas: this.state.serverOompaLoompas.concat(data),
             oompaLoompas: this.state.serverOompaLoompas.concat(data),
           })
-          localStorage.setItem(`list${this.page}`, JSON.stringify(data));
-          document.cookie = `list${this.page}=; max-age=86400`;
+          dataStore.createStorage(`list${this.page}`, data);
         } else {
-          console.log(data)
           this.setState({
             serverOompaLoompas: data,
             oompaLoompas: data,
             isLoading: false,
           })
-          localStorage.setItem(`list${this.page}`, JSON.stringify(data));
-          document.cookie = `list${this.page}=; max-age=86400`;
+          dataStore.createStorage(`list${this.page}`, data);
         }
       })
   }
@@ -82,13 +79,12 @@ class Home extends Component {
 
   scrollList = () => {
     this.page++;
-    const cookies = document.cookie.indexOf(`list${this.page}`);
-    const inStorage = JSON.parse(localStorage.getItem(`list${this.page}`));
+    const cookies = dataStore.searchCookie(`.list${this.page}`);
+    const inStorage = dataStore.searchLocalStorage(`list${this.page}`);
 
     if (cookies === -1) {
       this.getOompaLoompas(this.page)
     } else {
-      console.log('desde storage')
       this.setState({
         serverOompaLoompas: this.state.serverOompaLoompas.concat(inStorage),
         oompaLoompas: this.state.oompaLoompas.concat(inStorage),
@@ -108,7 +104,7 @@ class Home extends Component {
         <TitleOne>Find your Oompa Loompa</TitleOne>
         <TitleTwo>There are more than 100k</TitleTwo>
         <div className='row'>
-          {this.state.isLoading ? <span>Loading...</span> : this.renderList()}
+          {this.state.isLoading ? <Loading/> : this.renderList()}
         </div>
       </div>
     );

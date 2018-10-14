@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import dataStore from '../helpers/dataStore';
+import Loading from '../components/Loading'
 import oompaLoompaService from '../services/oompaLoompaService';
 
 const Info = styled.div.attrs({
@@ -13,7 +15,6 @@ const Info = styled.div.attrs({
   >div { 
     display: flex;
     flex-direction: column;
-    text-align: justify;
     line-height: 1.5;
     >b { font-size: 20px }
     >span { color: #969696; }
@@ -30,28 +31,24 @@ class Detail extends Component {
 
   componentDidMount(){
     const {id} = this.props.match.params;
-    const inStorage = JSON.parse(localStorage.getItem(id));
-    const cookies = document.cookie.indexOf(`.${id}=`);
+    const cookies = dataStore.searchCookie(`.${id}=`);
+    const inStorage = dataStore.searchLocalStorage(id);
      
     if(document.cookie.length === 0){ //clean all storage
-      console.log('clear storage')
       localStorage.clear();
     }
 
     if(cookies === -1){
       localStorage.removeItem(id)
-      console.log('elimina storage y llamada API')
       oompaLoompaService.getOompaLoompa(id)
         .then(({data}) => {
             this.setState({
               oompaLoompa: data,
               isLoading: false,
             })
-            localStorage.setItem(id, JSON.stringify(data));
-            document.cookie = `.${id}=; max-age=86400`;
+            dataStore.createStorage(id, data);
           })
     } else {
-      console.log('desde storage')
       this.setState({
         oompaLoompa: inStorage,
         isLoading: false,
@@ -68,7 +65,7 @@ class Detail extends Component {
           <b>{first_name} {last_name}</b>
           <span>{gender==='F' ? 'Woman' : 'Men'}</span>
           <span id='profession'>{profession}</span>
-          <p>{description}</p>
+          <p dangerouslySetInnerHTML={{__html: description}}></p>
         </div>
       </Info>
     )
@@ -77,7 +74,7 @@ class Detail extends Component {
   render() {
     return (
       <div className='container'>
-        {this.state.isLoading ? <span>Loading...</span> : this.renderInfo()}
+        {this.state.isLoading ? <Loading/> : this.renderInfo()}
       </div>
     );
   }
